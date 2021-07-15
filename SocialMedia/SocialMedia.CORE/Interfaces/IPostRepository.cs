@@ -8,6 +8,7 @@
 
     public interface IPostRepository
     {
-        Task<IEnumerable<Publicacion>> GetPosts(); 
+        Task<IEnumerable<Post>> GetPosts();
+        Task<Post> GetPosts(int id);
     }
 }

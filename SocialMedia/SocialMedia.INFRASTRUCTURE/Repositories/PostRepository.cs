@@ -16,10 +16,17 @@
             _context = context;
         }
 
-        public async Task<IEnumerable<Publicacion>> GetPosts()
+        public async Task<IEnumerable<Post>> GetPosts()
         {
-            var post = await _context.Publicacion.ToListAsync();
+            var post = await _context.Posts.ToListAsync();
             return post;
         }
+
+        public async Task<Post> GetPosts(int id)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(x => x.PostId == id);
+            return post;
+        }
+
     }
 }
