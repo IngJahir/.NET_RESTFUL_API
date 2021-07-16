@@ -16,6 +16,16 @@
             _context = context;
         }
 
+        // CREATE
+        // ------
+        public async Task InsertPost(Post post)
+        {
+            _context.Posts.Add(post);
+            await _context.SaveChangesAsync();
+        }
+
+        // READ
+        // ----
         public async Task<IEnumerable<Post>> GetPosts()
         {
             var post = await _context.Posts.ToListAsync();
@@ -28,10 +38,34 @@
             return post;
         }
 
-        public async Task InsertPost(Post post)
+        // UPDATE
+        // ------
+        public async Task<bool> UpdatePost(Post post) 
         {
-            _context.Posts.Add(post);
-            await _context.SaveChangesAsync();
+            // Traer datos segun id
+            // --------------------
+            var currentPost = await GetPosts(post.PostId);
+            currentPost.Date = post.Date;
+            currentPost.Description = post.Description;
+            currentPost.Image = post.Image;
+
+            // Guardar cambios
+            // ---------------
+            int rows = await _context.SaveChangesAsync();
+            return rows > 0;
+        }
+
+        // DELETE
+        // ------
+        public async Task<bool> DeletePost(int id)
+        {
+            var currentPost = await GetPosts(id);
+            _context.Posts.Remove(currentPost);
+
+            // Guardar cambios
+            // ---------------
+            int rows = await _context.SaveChangesAsync();
+            return rows > 0;
         }
 
     }
