@@ -1,5 +1,6 @@
 namespace SocialMedia.API
 {
+    using AutoMapper;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ namespace SocialMedia.API
     using SocialMedia.CORE.Interfaces;
     using SocialMedia.INFRASTRUCTURE.Data;
     using SocialMedia.INFRASTRUCTURE.Repositories;
+    using System;
 
     public class Startup
     {
@@ -22,9 +24,21 @@ namespace SocialMedia.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            // AutoMapper
+            // ----------
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+
+            // Se adiciona .AddNewtonsoftJson para evitar referencia circular
+            // --------------------------------------------------------------
+            services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
             // Conexion a BBDD
+            // ---------------
             services.AddDbContext<SocialMediaContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("SocialMEdia")));
 
