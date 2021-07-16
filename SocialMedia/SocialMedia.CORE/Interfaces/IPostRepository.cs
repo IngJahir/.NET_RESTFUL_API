@@ -10,5 +10,6 @@
     {
         Task<IEnumerable<Post>> GetPosts();
         Task<Post> GetPosts(int id);
+        Task InsertPost(Post post);
     }
 }
