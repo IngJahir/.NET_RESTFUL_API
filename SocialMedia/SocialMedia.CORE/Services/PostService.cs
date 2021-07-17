@@ -8,20 +8,18 @@
 
     public class PostService: IPostService
     {
-        private readonly IPostRepository _postRepository;
-        private readonly IUserRepository _userRepository;
-
-        public PostService(IPostRepository postRepository, IUserRepository userRepository )
+        private readonly IUnitOfWork _unitOfWork;
+        
+        public PostService(IUnitOfWork unitOfWork)
         {
-            _postRepository = postRepository;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // CREATE
         // ------
         public async Task InsertPost(Post post)
         {
-            var user = await _userRepository.GetUsers(post.UserId);
+            var user = await _unitOfWork.UserRepository.GetById(post.UserId);
 
             // Exixtencia del usuario
             if (user == null) 
@@ -35,33 +33,35 @@
                 throw new Exception("Contenido no permitido");
             }
 
-            await _postRepository.InsertPost(post);
+            await _unitOfWork.PostRepository.Add(post);
         }
 
         // READ
         // ----
         public async Task<IEnumerable<Post>> GetPosts()
         {
-            return await _postRepository.GetPosts();
+            return await _unitOfWork.PostRepository.GetAll();
         }
 
         public async Task<Post> GetPosts(int id)
         {
-            return await _postRepository.GetPosts(id);
+            return await _unitOfWork.PostRepository.GetById(id);
         }
 
         // UPDATE
         // ------
         public async Task<bool> UpdatePost(Post post)
         {
-            return await _postRepository.UpdatePost(post);
+            await _unitOfWork.PostRepository.Update(post);
+            return true;
         }
 
         // DELETE
         // ------
         public async Task<bool> DeletePost(int id)
         {
-            return await _postRepository.DeletePost(id);
+            await _unitOfWork.PostRepository.Delete(id);
+            return true;
         }
 
     }

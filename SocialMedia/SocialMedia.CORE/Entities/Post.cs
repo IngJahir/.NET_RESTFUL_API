@@ -3,14 +3,13 @@
     using System;
     using System.Collections.Generic;
 
-    public partial class Post
+    public partial class Post:BaseEntity
     {
         public Post()
         {
             Comments = new HashSet<Comment>();
         }
 
-        public int PostId { get; set; }
         public int UserId { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
