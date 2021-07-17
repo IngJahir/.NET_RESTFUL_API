@@ -13,12 +13,12 @@
     [ApiController]
     public class PostController : ControllerBase
     {
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
         private readonly IMapper _mapper;
 
-        public PostController(IPostRepository postRepository, IMapper mapper)
+        public PostController(IPostService postService, IMapper mapper)
         {
-            _postRepository = postRepository;
+            _postService = postService;
             _mapper = mapper;
         }
 
@@ -31,7 +31,7 @@
             // Este condicional requiere un data anotation.
 
             var post = _mapper.Map<Post>(postDto);
-            await _postRepository.InsertPost(post);
+            await _postService.InsertPost(post);
 
             postDto = _mapper.Map<PostDto>(post);
             var response = new ApiResponse<PostDto>(postDto);
@@ -44,7 +44,7 @@
         [HttpGet]
         public async Task<IActionResult> GetPosts()
         {
-            var post = await _postRepository.GetPosts();
+            var post = await _postService.GetPosts();
             var postDto = _mapper.Map<IEnumerable<PostDto>>(post);
             var response = new ApiResponse<IEnumerable<PostDto>>(postDto);
 
@@ -54,7 +54,7 @@
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPosts(int id)
         {
-            var post = await _postRepository.GetPosts(id);
+            var post = await _postService.GetPosts(id);
             var postDto = _mapper.Map<PostDto>(post);
             var response = new ApiResponse<PostDto>(postDto);
             return Ok(response);
@@ -68,7 +68,7 @@
             var post = _mapper.Map<Post>(postDto);
             post.PostId = id;
 
-            var result = await _postRepository.UpdatePost(post);
+            var result = await _postService.UpdatePost(post);
             var response = new ApiResponse<bool>(result);
             return Ok(response);
         }
@@ -78,7 +78,7 @@
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _postRepository.DeletePost(id);
+            var result = await _postService.DeletePost(id);
             var response = new ApiResponse<bool>(result);
             return Ok(response);
         }

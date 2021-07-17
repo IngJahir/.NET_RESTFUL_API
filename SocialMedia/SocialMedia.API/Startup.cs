@@ -9,6 +9,7 @@ namespace SocialMedia.API
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using SocialMedia.CORE.Interfaces;
+    using SocialMedia.CORE.Services;
     using SocialMedia.INFRASTRUCTURE.Data;
     using SocialMedia.INFRASTRUCTURE.Filters;
     using SocialMedia.INFRASTRUCTURE.Repositories;
@@ -44,7 +45,9 @@ namespace SocialMedia.API
 
             // Inyeccion de dependencias
             // -------------------------
+            services.AddTransient<IPostService, PostService>();
             services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
             //services.AddTransient<IPostRepository, PostMongoRepository>();
 
             // Inyeccion de Filters
