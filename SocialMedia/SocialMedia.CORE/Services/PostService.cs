@@ -3,6 +3,7 @@
     using SocialMedia.CORE.Entities;
     using SocialMedia.CORE.Exceptions;
     using SocialMedia.CORE.Interfaces;
+    using SocialMedia.CORE.QueryFilters;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -52,9 +53,21 @@
 
         // READ
         // ----
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
         {
-            return _unitOfWork.PostRepository.GetAll();
+            var post = _unitOfWork.PostRepository.GetAll();
+            
+            // Validacion de filters.
+            if (filters.UserId != null) 
+                post = post.Where(x => x.UserId == filters.UserId);
+
+            if (filters.Date != null)
+                post = post.Where(x => x.Date.ToShortDateString() == filters.Date?.ToShortDateString());
+
+            if (filters.Description != null)
+                post = post.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
+
+            return post;
         }
 
         public async Task<Post> GetPosts(int id)
