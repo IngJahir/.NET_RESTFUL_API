@@ -2,6 +2,7 @@
 {
     using AutoMapper;
     using Microsoft.AspNetCore.Mvc;
+    using Newtonsoft.Json;
     using SocialMedia.API.Responses;
     using SocialMedia.CORE.DTOs;
     using SocialMedia.CORE.Entities;
@@ -52,6 +53,18 @@
             var post = _postService.GetPosts(filters);
             var postDto = _mapper.Map<IEnumerable<PostDto>>(post);
             var response = new ApiResponse<IEnumerable<PostDto>>(postDto);
+
+            var metadata = new
+            {
+                post.TotalCount,
+                post.PageSize,
+                post.CurrentPage,
+                post.TotalPages,
+                post.HasNextPage,
+                post.HasPreviosPage
+            };
+
+            Response.Headers.Add("X-Paginacion",JsonConvert.SerializeObject(metadata));
 
             return Ok(response);
         }
