@@ -42,9 +42,9 @@
         // READ
         // ----
         [HttpGet]
-        public async Task<IActionResult> GetPosts()
+        public IActionResult GetPosts()
         {
-            var post = await _postService.GetPosts();
+            var post = _postService.GetPosts();
             var postDto = _mapper.Map<IEnumerable<PostDto>>(post);
             var response = new ApiResponse<IEnumerable<PostDto>>(postDto);
 

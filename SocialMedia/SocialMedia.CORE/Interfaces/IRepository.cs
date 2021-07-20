@@ -9,9 +9,9 @@
     public interface IRepository<T> where T : BaseEntity
     {
         Task Add(T entity);
-        Task<IEnumerable<T>> GetAll();
+        IEnumerable<T> GetAll();
         Task<T> GetById(int id);
-        Task Update(T entity);
+        void Update(T entity);
         Task Delete(int id);
     }
 }

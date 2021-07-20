@@ -34,7 +34,10 @@ namespace SocialMedia.API
             // Se adiciona .AddNewtonsoftJson para evitar referencia circular
             // Se adiciona .ConfigureApiBehaviorOptions para suprimir la validacion del modelo del API
             // ---------------------------------------------------------------------------------------
-            services.AddControllers()
+            services.AddControllers(options=> 
+                {
+                    options.Filters.Add<GlobalExceptionFilter>();
+                })
                 .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
                 //.ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 

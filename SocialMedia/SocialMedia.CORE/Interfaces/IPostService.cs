@@ -6,7 +6,7 @@
 
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetPosts();
+        IEnumerable<Post> GetPosts();
         Task<Post> GetPosts(int id);
         Task InsertPost(Post post);
         Task<bool> UpdatePost(Post post);
