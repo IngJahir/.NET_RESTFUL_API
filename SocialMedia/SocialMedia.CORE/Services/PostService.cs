@@ -1,5 +1,6 @@
 ﻿namespace SocialMedia.CORE.Services
 {
+    using Microsoft.Extensions.Options;
     using SocialMedia.CORE.CustomEntities;
     using SocialMedia.CORE.Entities;
     using SocialMedia.CORE.Exceptions;
@@ -13,10 +14,12 @@
     public class PostService: IPostService
     {
         private readonly IUnitOfWork _unitOfWork;
-        
-        public PostService(IUnitOfWork unitOfWork)
+        private readonly PaginationOptions _paginationOptions;
+
+        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> options)
         {
             _unitOfWork = unitOfWork;
+            _paginationOptions = options.Value;
         }
 
         // CREATE
@@ -56,6 +59,9 @@
         // ----
         public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
+            filters.PageNumber = filters.PageNumber == 0 ? _paginationOptions.DefaultPageNumber : filters.PageNumber;
+            filters.PageSize = filters.PageSize == 0 ? _paginationOptions.DefaultPageSize : filters.PageSize;
+
             var post = _unitOfWork.PostRepository.GetAll();
             
             // Validacion de filters.

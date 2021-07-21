@@ -4,15 +4,19 @@ namespace SocialMedia.API
     using FluentValidation.AspNetCore;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using SocialMedia.CORE.CustomEntities;
     using SocialMedia.CORE.Interfaces;
     using SocialMedia.CORE.Services;
     using SocialMedia.INFRASTRUCTURE.Data;
     using SocialMedia.INFRASTRUCTURE.Filters;
+    using SocialMedia.INFRASTRUCTURE.Interfaces;
     using SocialMedia.INFRASTRUCTURE.Repositories;
+    using SocialMedia.INFRASTRUCTURE.Services;
     using System;
 
     public class Startup
@@ -34,12 +38,20 @@ namespace SocialMedia.API
             // Se adiciona .AddNewtonsoftJson para evitar referencia circular
             // Se adiciona .ConfigureApiBehaviorOptions para suprimir la validacion del modelo del API
             // ---------------------------------------------------------------------------------------
-            services.AddControllers(options=> 
+            services.AddControllers(options =>
                 {
                     options.Filters.Add<GlobalExceptionFilter>();
                 })
-                .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
-                //.ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                });
+            //.ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+
+            // Configuraciones especiales
+            // --------------------------
+            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
 
             // Conexion a BBDD
             // ---------------
@@ -51,13 +63,20 @@ namespace SocialMedia.API
             services.AddTransient<IPostService, PostService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<IUriService>(provaider =>
+           {
+               var accesor = provaider.GetRequiredService<IHttpContextAccessor>();
+               var request = accesor.HttpContext.Request;
+               var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+               return new UriService(absoluteUri);
+           });
             //services.AddTransient<IPostRepository, PostMongoRepository>();
 
             // Inyeccion de Filters
             // ---------------------
             services
                 .AddMvc(options => { options.Filters.Add<ValidationFilter>(); })
-                .AddFluentValidation(options => { options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());});
+                .AddFluentValidation(options => { options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

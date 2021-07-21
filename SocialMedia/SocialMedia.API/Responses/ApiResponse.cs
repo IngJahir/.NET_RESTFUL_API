@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SocialMedia.API.Responses
+﻿namespace SocialMedia.API.Responses
 {
+    using SocialMedia.CORE.CustomEntities;
+
     public class ApiResponse<T>
     {
         public ApiResponse(T data)
@@ -12,5 +9,7 @@ namespace SocialMedia.API.Responses
             Data = data;
         }
         public T Data { get; set; }
+
+        public MetaData Meta { get; set; }
     }
 }
