@@ -15,6 +15,7 @@
     using System.Net;
     using System.Threading.Tasks;
 
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class PostController : ControllerBase
@@ -49,9 +50,14 @@
 
         // READ
         // ----
+        /// <summary>
+        /// Deuelve todos los post
+        /// </summary>
+        /// <param name="filters"> Filtros para aplicar </param>
+        /// <returns></returns>
         [HttpGet(Name = nameof(GetPosts))]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest , Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult GetPosts([FromQuery]PostQueryFilter filters)
         {
             var post = _postService.GetPosts(filters);

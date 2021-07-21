@@ -9,6 +9,7 @@ namespace SocialMedia.API
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
     using SocialMedia.CORE.CustomEntities;
     using SocialMedia.CORE.Interfaces;
     using SocialMedia.CORE.Services;
@@ -18,6 +19,8 @@ namespace SocialMedia.API
     using SocialMedia.INFRASTRUCTURE.Repositories;
     using SocialMedia.INFRASTRUCTURE.Services;
     using System;
+    using System.IO;
+    using System.Reflection;
 
     public class Startup
     {
@@ -72,6 +75,17 @@ namespace SocialMedia.API
            });
             //services.AddTransient<IPostRepository, PostMongoRepository>();
 
+            // Inyeccion Swagger
+            // ------------------
+            services.AddSwaggerGen(doc => 
+            {
+                doc.SwaggerDoc("V1", new OpenApiInfo { Title = "Social Media API", Version="V1" });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                doc.IncludeXmlComments(xmlPath);
+            });
+
             // Inyeccion de Filters
             // ---------------------
             services
@@ -88,6 +102,13 @@ namespace SocialMedia.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options => 
+            {
+                options.SwaggerEndpoint("/swagger/V1/swagger.json","Social Media API V1");
+                options.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
 
