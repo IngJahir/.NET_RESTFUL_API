@@ -8,6 +8,7 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn> $(NoWarm); 1591</NoWarn>
+    <UserSecretsId>2cf06c56-a66c-4006-b820-502a4468818b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

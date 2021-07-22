@@ -130,8 +130,16 @@ namespace SocialMedia.API
             app.UseSwagger();
             app.UseSwaggerUI(options => 
             {
-                options.SwaggerEndpoint("/swagger/V1/swagger.json","Social Media API V1");
+                // Local IIS: Se activa options.SwaggerEndpoint y se descativa options.RoutePrefix
+                // -------------------------------------------------------------------------------
+                //options.SwaggerEndpoint("../swagger/V1/swagger.json","Social Media API V1");
+                //options.RoutePrefix = string.Empty;
+
+                // Azure: Se activa las dos opciones.
+                // ----------------------------------
+                options.SwaggerEndpoint("/swagger/V1/swagger.json", "Social Media API V1");
                 options.RoutePrefix = string.Empty;
+
             });
 
             app.UseRouting();
