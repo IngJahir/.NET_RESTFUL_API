@@ -10,6 +10,8 @@
         {
             CreateMap<Post, PostDto>();
             CreateMap<PostDto, Post>();
+
+            CreateMap<Security, SecurityDto>().ReverseMap();
         }
     }
 }

@@ -9,6 +9,7 @@
         IPostRepository PostRepository { get; }
         IRepository<User> UserRepository { get; }
         IRepository<Comment> commentRepository { get; }
+        ISecurityRepository SecurityRepository { get; }
         void SaveChanges();
         Task SaveChanesAsync();
     }

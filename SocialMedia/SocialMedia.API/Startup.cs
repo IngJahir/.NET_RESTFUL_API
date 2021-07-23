@@ -67,22 +67,23 @@ namespace SocialMedia.API
             // Inyeccion de dependencias
             // -------------------------
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<ISecurityService, SecurityService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IUriService>(provaider =>
-           {
-               var accesor = provaider.GetRequiredService<IHttpContextAccessor>();
-               var request = accesor.HttpContext.Request;
-               var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-               return new UriService(absoluteUri);
-           });
+                {
+                    var accesor = provaider.GetRequiredService<IHttpContextAccessor>();
+                    var request = accesor.HttpContext.Request;
+                    var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                    return new UriService(absoluteUri);
+                });
             //services.AddTransient<IPostRepository, PostMongoRepository>();
 
             // Inyeccion Swagger
             // ------------------
-            services.AddSwaggerGen(doc => 
+            services.AddSwaggerGen(doc =>
             {
-                doc.SwaggerDoc("V1", new OpenApiInfo { Title = "Social Media API", Version="V1" });
+                doc.SwaggerDoc("V1", new OpenApiInfo { Title = "Social Media API", Version = "V1" });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -128,7 +129,7 @@ namespace SocialMedia.API
             app.UseHttpsRedirection();
 
             app.UseSwagger();
-            app.UseSwaggerUI(options => 
+            app.UseSwaggerUI(options =>
             {
                 // Local IIS: Se activa options.SwaggerEndpoint y se descativa options.RoutePrefix
                 // -------------------------------------------------------------------------------
@@ -146,7 +147,7 @@ namespace SocialMedia.API
 
             app.UseAuthentication();
 
-            app.UseAuthorization();          
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
