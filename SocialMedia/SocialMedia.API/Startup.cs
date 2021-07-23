@@ -18,6 +18,7 @@ namespace SocialMedia.API
     using SocialMedia.INFRASTRUCTURE.Data;
     using SocialMedia.INFRASTRUCTURE.Filters;
     using SocialMedia.INFRASTRUCTURE.Interfaces;
+    using SocialMedia.INFRASTRUCTURE.Options;
     using SocialMedia.INFRASTRUCTURE.Repositories;
     using SocialMedia.INFRASTRUCTURE.Services;
     using System;
@@ -58,6 +59,7 @@ namespace SocialMedia.API
             // Configuraciones especiales
             // --------------------------
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
+            services.Configure<PasswordOptions>(Configuration.GetSection("PasswordOption"));
 
             // Conexion a BBDD
             // ---------------
