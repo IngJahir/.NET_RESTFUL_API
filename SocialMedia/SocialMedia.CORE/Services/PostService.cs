@@ -89,6 +89,10 @@
         // ------
         public async Task<bool> UpdatePost(Post post)
         {
+            var existPost = await _unitOfWork.PostRepository.GetById(post.Id);
+            existPost.Image = post.Image;
+            existPost.Description = post.Description;
+
             _unitOfWork.PostRepository.Update(post);
             await _unitOfWork.SaveChanesAsync();
             return true;
@@ -99,6 +103,7 @@
         public async Task<bool> DeletePost(int id)
         {
             await _unitOfWork.PostRepository.Delete(id);
+            await _unitOfWork.SaveChanesAsync();
             return true;
         }
 

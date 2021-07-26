@@ -16,6 +16,7 @@ namespace SocialMedia.API
     using SocialMedia.CORE.Interfaces;
     using SocialMedia.CORE.Services;
     using SocialMedia.INFRASTRUCTURE.Data;
+    using SocialMedia.INFRASTRUCTURE.Extensions;
     using SocialMedia.INFRASTRUCTURE.Filters;
     using SocialMedia.INFRASTRUCTURE.Interfaces;
     using SocialMedia.INFRASTRUCTURE.Options;
@@ -56,42 +57,21 @@ namespace SocialMedia.API
                 });
             //.ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
-            // Configuraciones especiales
-            // --------------------------
-            services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
-            services.Configure<PasswordOptions>(Configuration.GetSection("PasswordOption"));
+            // Configuraciones especiales y Conexion a BBDD
+            // --------------------------------------------
+            services.AddOptions(Configuration);
 
             // Conexion a BBDD
-            // ---------------
-            services.AddDbContext<SocialMediaContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("SocialMEdia")));
+            // -----------------
+            services.AddDbContexts(Configuration);
 
             // Inyeccion de dependencias
             // -------------------------
-            services.AddTransient<IPostService, PostService>();
-            services.AddTransient<ISecurityService, SecurityService>();
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<IPasswordService, PasswordSevice>();
-            services.AddSingleton<IUriService>(provaider =>
-                {
-                    var accesor = provaider.GetRequiredService<IHttpContextAccessor>();
-                    var request = accesor.HttpContext.Request;
-                    var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-                    return new UriService(absoluteUri);
-                });
-            //services.AddTransient<IPostRepository, PostMongoRepository>();
+            services.AddServices();
 
             // Inyeccion Swagger
             // ------------------
-            services.AddSwaggerGen(doc =>
-            {
-                doc.SwaggerDoc("V1", new OpenApiInfo { Title = "Social Media API", Version = "V1" });
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                doc.IncludeXmlComments(xmlPath);
-            });
+            services.AddSwagger($"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
 
             // Inyeccion JWT: SIEMPRE ANTES DE MVC
             // -----------------------------------
